@@ -1,3 +1,4 @@
+import heapq
 class Ciudad(object):
     def __init__(self,nombre):
         self.nombre = nombre
@@ -19,6 +20,21 @@ class Grafo(object):
     def imprimir_grafo(self):
         for nombre, ciudad in sorted(self.ciudades.items()):
             print(f"{nombre} -> {ciudad.conexiones}")
+
+    def dijkstra(self, inicio, destino):
+        distancias = {ciudad: float('inf') for ciudad in self.ciudades}
+        distancias[inicio] = 0
+        cola_prioridad = [{0, inicio}]
+        while cola_prioridad:
+            distancia_actual, ciudad_actual = heapq.heappop(cola_prioridad)
+            if distancia_actual > distancias[ciudad_actual]:
+                continue
+            for ciudad_vecina, peso in self.ciudades[ciudad_actual].conexiones.items():
+                distancia_nueva = distancia_actual + peso
+                if distancia_nueva < distancias[ciudad_vecina]:
+                    distancias[ciudad_vecina] = distancia_nueva
+                    heapq.heappush(cola_prioridad, (distancia_nueva, ciudad_vecina))
+        return distancias[destino]
 
 if __name__ == '__main__':
     g = Grafo()
@@ -45,3 +61,8 @@ if __name__ == '__main__':
         g.agregar_conexion(*conexion)
 
     g.imprimir_grafo()
+
+    inicio = 'A'
+    destino = 'E'
+    distancia_minima = g.dijkstra(inicio, destino)
+    print(f"La distancia minima entre {inicio} y {destino} es {distancia_minima}")
