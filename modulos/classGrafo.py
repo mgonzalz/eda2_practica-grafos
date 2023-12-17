@@ -1,4 +1,5 @@
 import heapq
+from classBST import BSTNode
 class Ciudad(object):
     def __init__(self,nombre):
         self.nombre = nombre
@@ -9,6 +10,7 @@ class Ciudad(object):
 
 class Grafo(object):
     ciudades = {}
+    distancias_bst = BSTNode()
 
     def agregar_ciudad(self, ciudad):
         self.ciudades[ciudad.nombre] = ciudad
@@ -16,6 +18,8 @@ class Grafo(object):
     def agregar_conexion(self, ciudad1, ciudad2, peso):
         self.ciudades[ciudad1].agregar_conexion(ciudad2, peso)
         self.ciudades[ciudad2].agregar_conexion(ciudad1, peso)
+
+        self.agregar_distancia_bst(peso, ciudad1, ciudad2)
 
     def imprimir_grafo(self):
         for nombre, ciudad in sorted(self.ciudades.items()):
@@ -35,6 +39,13 @@ class Grafo(object):
                     distancias[ciudad_vecina] = distancia_nueva
                     heapq.heappush(cola_prioridad, (distancia_nueva, ciudad_vecina))
         return distancias[destino]
+
+    def agregar_distancia_bst(self, distancia, ciudad1, ciudad2):
+        self.distancias_bst.insert(distancia, ciudad1, ciudad2)
+
+    def mostrar_registro_ordenado(self):
+        return self.distancias_bst.inorder_traversal()
+
 
 if __name__ == '__main__':
     g = Grafo()
@@ -66,3 +77,7 @@ if __name__ == '__main__':
     destino = 'E'
     distancia_minima = g.dijkstra(inicio, destino)
     print(f"La distancia minima entre {inicio} y {destino} es {distancia_minima}")
+
+    registro = g.mostrar_registro_ordenado()
+    for distancia, ciudad1, ciudad2 in registro:
+        print(f"Distancia {distancia} entre {ciudad1} y {ciudad2}")
