@@ -1,5 +1,9 @@
 import heapq
 from .classBST import BSTNode
+
+import networkx as nx
+import matplotlib.pyplot as plt
+
 class Ciudad(object):
     def __init__(self,nombre):
         self.nombre = nombre
@@ -26,6 +30,22 @@ class Grafo(object):
     def imprimir_grafo(self):
         for nombre, ciudad in sorted(self.ciudades.items()):
             print(f"{nombre} -> {ciudad.conexiones}")
+
+    def grafo_networkx(self):
+        G = nx.Graph()
+        for ciudad_nombre, ciudad in self.ciudades.items():
+            G.add_node(ciudad_nombre)
+            for conexion, peso in ciudad.conexiones.items():
+                G.add_edge(ciudad_nombre, conexion, weight=peso)
+        return G
+
+    def dibujar_grafo(self):
+        G = self.grafo_networkx()
+        pos = nx.spring_layout(G)
+        labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw(G, pos, with_labels=True, node_size=700, node_color='purple', font_size=10, font_color='black')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+        plt.show()
 
 
     def dijkstra(self, inicio, destino):
