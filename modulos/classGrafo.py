@@ -75,25 +75,25 @@ class Grafo(object):
         padre = {}
         rango = {}
 
-        for u, v, peso in self.aristas:
-            padre[u] = u
-            padre[v] = v
-            rango[u] = 0
-            rango[v] = 0
+        for inicio, destino, distancia in self.aristas:
+            padre[inicio] = inicio
+            padre[destino] = destino
+            rango[inicio] = 0
+            rango[destino] = 0
 
-        for u, v, peso in self.aristas:
-            x = self.encontrar(padre, u)
-            y = self.encontrar(padre, v)
+        for inicio, destino, distancia in self.aristas:
+            x = self.encontrar(padre, inicio)
+            y = self.encontrar(padre, destino)
 
             if x != y:
-                resultado.append([u, v, peso])
+                resultado.append([inicio, destino, distancia])
                 self.unir(padre, rango, x, y)
 
         coste_min = 0
-        print("Aristas en el MST construido")
-        for u, v, peso in resultado:
-            coste_min += peso
-            print("%s -- %s == %d" % (u, v, peso))
+        print("Aristas en el MST:")
+        for inicio, destino, distancia in resultado:
+            coste_min += distancia
+            print(f"{inicio} - {destino}: {distancia}")
         print("Minimum Spanning Tree:", coste_min)
 
 
