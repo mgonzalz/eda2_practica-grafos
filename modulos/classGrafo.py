@@ -1,5 +1,5 @@
 import heapq
-from classBST import BSTNode
+from .classBST import BSTNode
 class Ciudad(object):
     def __init__(self,nombre):
         self.nombre = nombre
@@ -95,45 +95,3 @@ class Grafo(object):
             coste_min += distancia
             print(f"{inicio} - {destino}: {distancia}")
         print("Minimum Spanning Tree:", coste_min)
-
-
-
-
-if __name__ == '__main__':
-    g = Grafo()
-
-    for letra in map(chr, range(65,70)):
-        g.agregar_ciudad(Ciudad(letra))
-
-    conexiones_pesos = [
-        ('E', 'C', 2),
-        ('E', 'D', 3),
-        ('C', 'A', 1),
-        ('C', 'E', 4),
-        ('D', 'A', 2),
-        ('D', 'B', 1),
-        ('D', 'E', 3),
-        ('A', 'B', 5),
-        ('A', 'C', 2),
-        ('A', 'D', 4),
-        ('B', 'A', 1),
-        ('B', 'D', 3)
-    ]
-
-    for conexion in conexiones_pesos:
-        g.agregar_conexion(*conexion)
-
-    g.imprimir_grafo()
-    print('\n')
-
-    inicio = 'A'
-    destino = 'E'
-    distancia_minima = g.dijkstra(inicio, destino)
-    print(f"La distancia minima entre {inicio} y {destino} es {distancia_minima}\n")
-
-    registro = g.mostrar_registro_ordenado()
-    for distancia, ciudad1, ciudad2 in registro:
-        print(f'Distancia {distancia} entre {ciudad1} y {ciudad2}')
-
-    print('\n')
-    g.KruskalMST()
