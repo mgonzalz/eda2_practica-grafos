@@ -11,6 +11,7 @@ class Ciudad(object):
 class Grafo(object):
     ciudades = {}
     distancias_bst = BSTNode()
+    aristas = []
 
     def agregar_ciudad(self, ciudad):
         self.ciudades[ciudad.nombre] = ciudad
@@ -20,10 +21,12 @@ class Grafo(object):
         self.ciudades[ciudad2].agregar_conexion(ciudad1, peso)
 
         self.agregar_distancia_bst(peso, ciudad1, ciudad2)
+        self.aristas.append((ciudad1, ciudad2, peso))
 
     def imprimir_grafo(self):
         for nombre, ciudad in sorted(self.ciudades.items()):
             print(f"{nombre} -> {ciudad.conexiones}")
+
 
     def dijkstra(self, inicio, destino):
         distancias = {ciudad: float('inf') for ciudad in self.ciudades}
@@ -40,11 +43,60 @@ class Grafo(object):
                     heapq.heappush(cola_prioridad, (distancia_nueva, ciudad_vecina))
         return distancias[destino]
 
+
     def agregar_distancia_bst(self, distancia, ciudad1, ciudad2):
         self.distancias_bst.insert(distancia, ciudad1, ciudad2)
 
     def mostrar_registro_ordenado(self):
         return self.distancias_bst.inorder_traversal()
+
+
+    def encontrar(self, padre, i):
+        if padre[i] == i:
+            return i
+        return self.encontrar(padre, padre[i])
+
+    def unir(self, padre, rango, x, y):
+        xraiz = self.encontrar(padre, x)
+        yraiz = self.encontrar(padre, y)
+
+        if rango[xraiz] < rango[yraiz]:
+            padre[xraiz] = yraiz
+        elif rango[xraiz] > rango[yraiz]:
+            padre[yraiz] = xraiz
+        else:
+            padre[yraiz] = xraiz
+            rango[xraiz] += 1
+
+    def KruskalMST(self):
+        resultado = []
+        self.aristas = sorted(self.aristas, key=lambda item: item[2])
+
+        padre = {}
+        rango = {}
+
+        for u, v, peso in self.aristas:
+            padre[u] = u
+            padre[v] = v
+            rango[u] = 0
+            rango[v] = 0
+
+        for u, v, peso in self.aristas:
+            x = self.encontrar(padre, u)
+            y = self.encontrar(padre, v)
+
+            if x != y:
+                resultado.append([u, v, peso])
+                self.unir(padre, rango, x, y)
+
+        coste_min = 0
+        print("Aristas en el MST construido")
+        for u, v, peso in resultado:
+            coste_min += peso
+            print("%s -- %s == %d" % (u, v, peso))
+        print("Minimum Spanning Tree:", coste_min)
+
+
 
 
 if __name__ == '__main__':
@@ -72,12 +124,16 @@ if __name__ == '__main__':
         g.agregar_conexion(*conexion)
 
     g.imprimir_grafo()
+    print('\n')
 
     inicio = 'A'
     destino = 'E'
     distancia_minima = g.dijkstra(inicio, destino)
-    print(f"La distancia minima entre {inicio} y {destino} es {distancia_minima}")
+    print(f"La distancia minima entre {inicio} y {destino} es {distancia_minima}\n")
 
     registro = g.mostrar_registro_ordenado()
     for distancia, ciudad1, ciudad2 in registro:
-        print(f"Distancia {distancia} entre {ciudad1} y {ciudad2}")
+        print(f'Distancia {distancia} entre {ciudad1} y {ciudad2}')
+
+    print('\n')
+    g.KruskalMST()
