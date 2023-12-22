@@ -90,28 +90,38 @@ class Grafo(object):
 
     def KruskalMST(self):
         resultado = []
-        self.aristas = sorted(self.aristas, key=lambda item: item[2])
+        aristas = sorted(self.aristas, key=lambda item: item[2])
 
         padre = {}
         rango = {}
 
-        for inicio, destino, distancia in self.aristas:
-            padre[inicio] = inicio
-            padre[destino] = destino
-            rango[inicio] = 0
-            rango[destino] = 0
+        for nodo in self.ciudades:
+            padre[nodo] = nodo
+            rango[nodo] = 0
 
-        for inicio, destino, distancia in self.aristas:
+        for arista in aristas:
+            inicio, destino, distancia = arista
             x = self.encontrar(padre, inicio)
             y = self.encontrar(padre, destino)
-
             if x != y:
                 resultado.append([inicio, destino, distancia])
                 self.unir(padre, rango, x, y)
-
         coste_min = 0
         print("Aristas en el MST:")
         for inicio, destino, distancia in resultado:
             coste_min += distancia
             print(f"{inicio} - {destino}: {distancia}")
         print("Minimum Spanning Tree:", coste_min)
+
+        # Visualización gráfica
+        G = nx.Graph()
+        for inicio, destino, distancia in resultado:
+            G.add_edge(inicio, destino, weight=distancia)
+
+        pos = nx.spring_layout(G)
+        labels = nx.get_edge_attributes(G, 'weight')
+        nx.draw(G, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=10, font_color='black')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+        plt.title('MST mediante Kruskal')
+        plt.show()
+
